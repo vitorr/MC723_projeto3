@@ -3,8 +3,8 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ROUTER_H_
-#define ROUTER_H_
+#ifndef LOCK_H_
+#define LOCK_H_
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -13,8 +13,7 @@
 #include <systemc>
 // ArchC includes
 #include "ac_tlm_protocol.H"
-#include "ac_tlm_port.H"
-#define LOCK_ADDR 8004
+#include "router.h"
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -25,12 +24,13 @@ using tlm::tlm_transport_if;
 
 //#define DEBUG
 
-/// Namespace to isolate router from ArchC
+
+/// Namespace to isolate memory from ArchC
 namespace user
 {
 
-/// A TLM router
-class router :
+/// A locking mechanimsm
+class lock :
   public sc_module,
   public ac_tlm_transport_if // Using ArchC TLM protocol
 {
@@ -41,20 +41,39 @@ public:
   ac_tlm_rsp_status writem( const uint32_t & , const uint32_t & );
   /// Internal read
   ac_tlm_rsp_status readm( const uint32_t & , uint32_t & );
-  //Communication port to the memory.
-  ac_tlm_port DM_port;
 
   /**
    * Implementation of TLM transport method that
    * handle packets of the protocol doing apropriate actions.
    * This method must be implemented (required by SystemC TLM).
    * @param request is a received request packet
-   * @return A response packet to be sent
+   * @return A response packet to be send
   */
   ac_tlm_rsp transport( const ac_tlm_req &request ) {
-    
 
-    return DM_port->transport (request);
+    ac_tlm_rsp response;
+
+    switch( request.type ) {
+    case READ :     // Packet is a READ one
+      #ifdef DEBUG  // Turn it on to print transport level messages
+    cout << "Transport READ at 0x" << hex << request.addr << " value ";
+    cout << response.data << endl;
+      #endif
+      response.status = readm( request.addr , response.data );
+      break;
+    case WRITE:     // Packet is a WRITE
+      #ifdef DEBUG
+    cout << "Transport WRITE at 0x" << hex << request.addr << " value ";
+    cout << request.data << endl;
+      #endif
+      response.status = writem( request.addr , request.data );
+      break;
+    default :
+      response.status = ERROR;
+      break;
+    }
+
+    return response;
   }
 
 
@@ -64,16 +83,18 @@ public:
    * @param k Memory size in kilowords.
    *
    */
-  router( sc_module_name module_name , int k = 5242880 );
+  lock( sc_module_name module_name , int k = 5242880 );
 
   /**
    * Default destructor.
    */
-  ~router();
+  ~lock();
 
+private:
+  uint8_t *memory;
 
 };
 
 };
 
-#endif //ROUTER_H_
+#endif //LOCK_H_

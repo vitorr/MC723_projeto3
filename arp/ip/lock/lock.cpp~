@@ -1,0 +1,36 @@
+/*
+ */
+
+//////////////////////////////////////////////////////////////////////////////
+// Standard includes
+// SystemC includes
+// ArchC includes
+
+#include "lock.h"
+
+//////////////////////////////////////////////////////////////////////////////
+
+/// Namespace to isolate memory from ArchC
+using user::lock;
+
+/// Constructor
+lock::lock( sc_module_name module_name) :
+  sc_module( module_name ),
+  target_export("iport")
+{
+    /// Binds target_export to the memory
+    target_export( *this );
+
+    /// Initialize lock memory position.
+    lock_memory = new uint8_t;
+    lock_memory=0;
+
+}
+
+/// Destructor
+lock::~lock() {
+
+}
+
+
+
