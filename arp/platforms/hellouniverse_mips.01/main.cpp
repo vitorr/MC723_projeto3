@@ -12,8 +12,6 @@
  * http://www.lsc.ic.unicamp.br                       *
  ******************************************************/
  
-// Rodolfo editou aqui
-//
 const char *project_name="mips1";
 const char *project_file="mips1.ac";
 const char *archc_version="2.0beta1";
@@ -22,8 +20,10 @@ const char *archc_options="-abi -dy ";
 #include  <systemc.h>
 #include  "mips1.H"
 #include  "ac_tlm_mem.h"
+#include  "router.h"
 
 using user::ac_tlm_mem;
+using user::router;
 
 int sc_main(int ac, char *av[])
 {
@@ -31,15 +31,15 @@ int sc_main(int ac, char *av[])
   //!  ISA simulator
   mips1 mips1_proc1("mips1");
   ac_tlm_mem mem("mem");
-  ac_tlm_router router("router");
+  router rtr("rtr");
 
 #ifdef AC_DEBUG
   ac_trace("mips1_proc1.trace");
 #endif 
 
   //mips1_proc1.DM_port(mem.target_export);
-  mips1_proc1.DM_port(router.target_export);
-  router.DM_port(mem.target_export);
+  mips1_proc1.DM_port(rtr.target_export);
+  rtr.DM_port(mem.target_export);
 
   mips1_proc1.init(ac, av);
   cerr << endl;
