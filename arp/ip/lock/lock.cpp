@@ -23,7 +23,7 @@ lock::lock( sc_module_name module_name) :
 
     /// Initialize lock memory position.
     lock_memory = new uint8_t;
-    lock_memory=0;
+    lock_memory= LOCK_ADDR;
 
 }
 
