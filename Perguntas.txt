@@ -1,3 +1,17 @@
 1: Quais são as operações (instruções) atômicas típicas de um processador?
 2: Como implementar um lock/mutex com esta operação?
 3: Como separar as pilhas?
+
+Tarefas:
+
+1 - Inserir roteador
+
+2 - Incluir lock (HW)
+
+3 - Testar lock ainda no single core
+
+4 - Implementar separação da pilha
+
+5 - Implementar multicore (2 ... 8)
+
+6 - SW multicore!
