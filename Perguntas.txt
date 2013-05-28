@@ -1,0 +1,3 @@
+1: Quais são as operações (instruções) atômicas típicas de um processador?
+2: Como implementar um lock/mutex com esta operação?
+3: Como separar as pilhas?
