@@ -3,15 +3,17 @@
 
 int main(int argc, char *argv[]){
   int i;
-  volatile int * l = (int *) LOCK_ADDR;
+  volatile static int proc_number = 0;
+  volatile const int * l = (int *) LOCK_ADDR;
   int l_value;
 
   //Gets the lock.
   do {
     l_value = *l; 
   } while (l_value != 0);
-  printf("Hello universe!\n");
-  *l = l_value; 
+  proc_number++;
+  printf("Hello universe! From processor %d\n", proc_number);
+  *l = 0; 
 
   exit(0); // To avoid cross-compiler exit routine
   return 0; // Never executed, just for compatibility

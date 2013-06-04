@@ -18,13 +18,11 @@ lock::lock( sc_module_name module_name) :
   sc_module( module_name ),
   target_export("iport")
 {
-    /// Binds target_export to the memory
+    /// Binds target_export to the lock.
     target_export( *this );
 
     /// Initialize lock memory position.
-    lock_memory = new uint8_t;
-    lock_memory=0;
-
+    lock_memory = 0;
 }
 
 /// Destructor
@@ -33,29 +31,29 @@ lock::~lock() {
 }
 
 /** Internal Write
-  * Note: Always write 32 bits
-  * @param a is the address to write
-  * @param d id the data being write
+  * Note: Always writes 32 bits
+  * @param d is the data being written
   * @returns A TLM response packet with SUCCESS
 */
 ac_tlm_rsp_status lock::writem( const uint32_t &d )
 {
-  *((uint32_t *) &lock_memory) = *((uint32_t *) &d);
+  //Writes given value to the lock.
+  lock_memory = d;
   return SUCCESS;
 }
 
 /** Internal Read
-  * Note: Always read 32 bits
-  * @param a is the address to read
-  * @param d id the data that will be read
+  * Note: Always reads 32 bits
+  * @param d is the data that will be read
   * @returns A TLM response packet with SUCCESS and a modified d
 */
 ac_tlm_rsp_status lock::readm( uint32_t &d )
 {
-  *((uint32_t *) &d) = *((uint32_t *) &lock_memory);
-  if (d == 0) {
-    *((uint32_t *) &d) = 1;
-  }
+  //Gets the current values of the lock.
+  d = lock_memory;
+
+  //Always sets the lock to 1 ("taken").
+  lock_memory = 0x01000000;
 
   return SUCCESS;
 }
