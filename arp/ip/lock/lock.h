@@ -13,7 +13,6 @@
 #include <systemc>
 // ArchC includes
 #include "ac_tlm_protocol.H"
-#include "router.h"
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -38,14 +37,13 @@ public:
   /// Exposed port with ArchC interface
   sc_export< ac_tlm_transport_if > target_export;
   /// Internal write
-  ac_tlm_rsp_status writem( const uint32_t & , const uint32_t & );
+  ac_tlm_rsp_status writem( const uint32_t & );
   /// Internal read
-  ac_tlm_rsp_status readm( const uint32_t & , uint32_t & );
+  ac_tlm_rsp_status readm( uint32_t & );
 
   /**
    * Implementation of TLM transport method that
-   * handle packets of the protocol doing apropriate actions.
-   * This method must be implemented (required by SystemC TLM).
+   * handles packets of the protocol doing apropriate actions.
    * @param request is a received request packet
    * @return A response packet to be send
   */
@@ -54,19 +52,11 @@ public:
     ac_tlm_rsp response;
 
     switch( request.type ) {
-    case READ :     // Packet is a READ one
-      #ifdef DEBUG  // Turn it on to print transport level messages
-    cout << "Transport READ at 0x" << hex << request.addr << " value ";
-    cout << response.data << endl;
-      #endif
-      response.status = readm( request.addr , response.data );
+    case READ :     // Packet is a READ one.
+      response.status = readm( response.data );
       break;
-    case WRITE:     // Packet is a WRITE
-      #ifdef DEBUG
-    cout << "Transport WRITE at 0x" << hex << request.addr << " value ";
-    cout << request.data << endl;
-      #endif
-      response.status = writem( request.addr , request.data );
+    case WRITE:     // Packet is a WRITE one.
+      response.status = writem( request.data );
       break;
     default :
       response.status = ERROR;
@@ -76,6 +66,8 @@ public:
     return response;
   }
 
+  //Stored lock value.
+  uint32_t lock_memory;
 
   /**
    * Default constructor.

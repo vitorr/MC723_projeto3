@@ -14,7 +14,7 @@
 // ArchC includes
 #include "ac_tlm_protocol.H"
 #include "ac_tlm_port.H"
-#define LOCK_ADDR 8004
+#define LOCK_ADDR (8*1024*1024)
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -43,18 +43,22 @@ public:
   ac_tlm_rsp_status readm( const uint32_t & , uint32_t & );
   //Communication port to the memory.
   ac_tlm_port DM_port;
+  //Communication port to the lock.
+  ac_tlm_port LOCK_port;
 
   /**
    * Implementation of TLM transport method that
-   * handle packets of the protocol doing apropriate actions.
-   * This method must be implemented (required by SystemC TLM).
+   * handles packets of the protocol doing apropriate actions.
    * @param request is a received request packet
-   * @return A response packet to be sent
   */
   ac_tlm_rsp transport( const ac_tlm_req &request ) {
-    
-
-    return DM_port->transport (request);
+    //Access to the lock.
+    if (request.addr == LOCK_ADDR) {
+        return LOCK_port->transport (request);
+    //Access to other memory positions.
+    } else {
+        return DM_port->transport (request);
+    }
   }
 
 
