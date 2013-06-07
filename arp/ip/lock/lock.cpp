@@ -52,7 +52,7 @@ ac_tlm_rsp_status lock::readm( uint32_t &d )
   //Gets the current values of the lock.
   d = lock_memory;
 
-  //Always sets the lock to 1 ("taken").
+  //Always sets the lock to -1 ("taken").
   lock_memory = -1;
 
   return SUCCESS;

@@ -8,7 +8,10 @@ int main(int argc, char *argv[]){
   int l_value;
 
   //Gets the lock.
-  while (*l != 0);
+  do {
+    l_value = *l; 
+  } while (l_value != 0);
+  /*while (*l != );*/
   proc_number++;
   printf("Hello universe! From processor %d\n", proc_number);
   *l = l_value; 
