@@ -59,10 +59,10 @@ public:
     //Access to the lock.
     if (request.addr == LOCK_ADDR) {
         return LOCK_port->transport (request);
-    //Access to other memory positions.
+    //Access to the peripheral sin
     } else if (request.addr == SIN_ADDR) {
         return SIN_port->transport (request);
-
+    //Access to other memory positions.
     } else {
         return DM_port->transport (request);
     }
