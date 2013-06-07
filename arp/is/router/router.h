@@ -15,6 +15,7 @@
 #include "ac_tlm_protocol.H"
 #include "ac_tlm_port.H"
 #define LOCK_ADDR (8*1024*1024)
+#define SIN_ADDR (9*1024*1024)
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -45,6 +46,9 @@ public:
   ac_tlm_port DM_port;
   //Communication port to the lock.
   ac_tlm_port LOCK_port;
+  //Communication port to the sin.
+  ac_tlm_port SIN_port;	
+
 
   /**
    * Implementation of TLM transport method that
@@ -56,6 +60,9 @@ public:
     if (request.addr == LOCK_ADDR) {
         return LOCK_port->transport (request);
     //Access to other memory positions.
+    } else if (request.addr == SIN_ADDR) {
+        return SIN_port->transport (request);
+
     } else {
         return DM_port->transport (request);
     }
