@@ -4,7 +4,7 @@
 
 include defs.arp
 
-TARGET=hellouniverse_mips.01
+TARGET=fft_mips.01
 EXE = $(TARGET).x
 
 SRCS := main.cpp
@@ -24,7 +24,7 @@ main.o:
 all: $(EXE)
 #------------------------------------------------------
 run: all
-	./$(EXE) --load=hello_universe.x 5
+	./$(EXE) --load=fft.x
 #------------------------------------------------------
 clean:
 	rm -f $(OBJS) $(EXE) *~ *.o
