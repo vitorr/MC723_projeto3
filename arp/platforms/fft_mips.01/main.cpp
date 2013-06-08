@@ -22,11 +22,13 @@ const char *archc_options="-abi -dy ";
 #include  "ac_tlm_mem.h"
 #include  "router.h"
 #include  "lock.h"
+#include  "psin.h"
 #include  <string.h>
 
 using user::ac_tlm_mem;
 using user::router;
 using user::lock;
+using user::psin;
 
 int sc_main(int ac, char *av[])
 {
@@ -46,6 +48,7 @@ int sc_main(int ac, char *av[])
   ac_tlm_mem mem("mem");
   router rtr("rtr");
   lock l("l");
+  psin s("s");
 
 #ifdef AC_DEBUG
   ac_trace("mips1_proc1.trace");
@@ -61,6 +64,7 @@ int sc_main(int ac, char *av[])
   mips1_proc8.DM_port(rtr.target_export);
   rtr.DM_port(mem.target_export);
   rtr.LOCK_port(l.target_export);
+  rtr.PSIN_port(s.target_export);
 
   //Initialize processors.
   for (i = 0; i < ac; i++) {

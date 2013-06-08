@@ -4,8 +4,8 @@
 # ####################################################
 
 # Variable that points to ArchC installation path
-PLATFORM := hellouniverse_mips.01
-
+#PLATFORM := hellouniverse_mips.01
+PLATFORM := fft_mips.01
 # Variable that points to SystemC installation path
 export SYSTEMC :=  /home/staff/rodolfo/mc723/systemc
 

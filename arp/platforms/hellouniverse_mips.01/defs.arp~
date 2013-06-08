@@ -1,5 +1,5 @@
-IP := ac_tlm_mem
-IS := 
+IP := ac_tlm_mem lock psin
+IS := router 
 PROCESSOR := mips1
 SW := hello_universe
 WRAPPER := 
