@@ -38,14 +38,11 @@ psin::~psin() {
 */
 ac_tlm_rsp_status psin::writem( const uint32_t &d )
 {
-  uint32_t swapped = ((d>>24)&0xff) | // move byte 3 to byte 0
-                    ((d<<8)&0xff0000) | // move byte 1 to byte 2
-                    ((d>>8)&0xff00) | // move byte 2 to byte 1
-                    ((d<<24)&0xff000000); // byte 0 to byte 3
-  //Writes given value to the sin
-  double x = 0.00;
-  swapped = x;
-  x = sin(swapped);
+  uint32_t swapped = __builtin_bswap32(d);
+  float swapped_f;
+  memcpy(&swapped_f, &swapped, sizeof(uint32_t));
+
+  float x = sinf(swapped_f);
   psin_memory = x;
 //  psin_memory = sin(swapped);
   return SUCCESS;
@@ -58,13 +55,9 @@ ac_tlm_rsp_status psin::writem( const uint32_t &d )
 */
 ac_tlm_rsp_status psin::readm( uint32_t &d )
 { 
-  uint32_t swapped = ((psin_memory>>24)&0xff) | // move byte 3 to byte 0
-                    ((psin_memory<<8)&0xff0000) | // move byte 1 to byte 2
-                    ((psin_memory>>8)&0xff00) | // move byte 2 to byte 1
-                    ((psin_memory<<24)&0xff000000); // byte 0 to byte 3
-
-  //Gets the current values of the sin.
-  d = swapped;
+  uint32_t psin_int;
+  memcpy(&psin_int, &psin_memory, sizeof(uint32_t));
+  d = __builtin_bswap32(psin_int);
 
   return SUCCESS;
 }

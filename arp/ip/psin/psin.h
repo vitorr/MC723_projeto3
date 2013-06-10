@@ -67,7 +67,7 @@ public:
   }
 
   //Stored sin value.
-  uint32_t psin_memory;
+  float psin_memory;
 
   /**
    * Default constructor.
