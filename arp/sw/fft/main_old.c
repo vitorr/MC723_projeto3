@@ -94,11 +94,11 @@ int main(int argc, char *argv[]) {
 	float *coeff;
 	float *amp;
 	int invfft=0;
-
 	volatile const int * lock = (int *) LOCK_ADDR;
-    volatile static int proc_index = 0; 
-    int current_proc_index = 0;
-    int waves_start, size_start;
+
+    int waves, length;
+    char mode[10];
+    volatile static int proc_number = 1;
 
 	/*if (argc<3)
 	{
@@ -120,7 +120,7 @@ int main(int argc, char *argv[]) {
 	invfft = !strncmp(mode,"i",1);
 	MAXSIZE=length;
 	MAXWAVES=waves;*/
-
+		
  srand(1);
 
  RealIn=(float*)malloc(sizeof(float)*MAXSIZE);
@@ -130,29 +130,28 @@ int main(int argc, char *argv[]) {
  coeff=(float*)malloc(sizeof(float)*MAXWAVES);
  amp=(float*)malloc(sizeof(float)*MAXWAVES);
 
- //Gets a unique index for the current processor.
- while (*lock != 0);
- current_proc_index = proc_index;
- proc_index++;
- printf("Hello FFT! From processor %d\n", proc_index);
- *lock = 0; 
-
- //Gets a portion of the data for each processor.
- waves_start = current_proc_index * MAXWAVES / 8;
- size_start = current_proc_index * MAXSIZE / 8;
-
-
  /* Makes MAXWAVES waves of random amplitude and period */
-	for(i = waves_start; i < waves_start + (MAXWAVES/8); i++) 
+	for(i=0;i<MAXWAVES;i++) 
 	{
 		coeff[i] = rand()%1000;
 		amp[i] = rand()%1000;
 	}
- for(i = size_start; i < size_start + (MAXSIZE/8); i++) 
+ i=-1;
+ while(1) 
  {
-   /*   RealIn[i]=rand();*/
+	/*critical region*/
+	while(*lock != 0);
+	i++;
+	if(i > MAXSIZE){
+	   *lock = 0;
+	   break;
+    }
+
+	*lock = 0;
+	/*end of CR*/
+
 	 RealIn[i]=0;
-	 for(j = waves_start; j < waves_start + (MAXWAVES/8); j++) 
+	 for(j=0;j<MAXWAVES;j++) 
 	 {
 		 /* randomly select sin or cos */
 		 if (rand()%2)
@@ -170,18 +169,19 @@ int main(int argc, char *argv[]) {
  /* regular*/
  fft_float (MAXSIZE,invfft,RealIn,ImagIn,RealOut,ImagOut);
  
- //Gets one processor to print the result.
+ //Only one processor prints.
  while(*lock != 0);
- if (current_proc_index == 1) {
-  printf("RealOut:\n");
-  for (i=0;i<MAXSIZE;i++)
-    printf("%f \t", RealOut[i]);
-  printf("\n");
+ if (proc_number == 1) {
+     proc_number++;
+     printf("RealOut:\n");
+     for (i=0;i<MAXSIZE;i++)
+       printf("%f \t", RealOut[i]);
+     printf("\n");
 
- printf("ImagOut:\n");
-  for (i=0;i<MAXSIZE;i++)
-    printf("%f \t", ImagOut[i]);
-    printf("\n");
+    printf("ImagOut:\n");
+     for (i=0;i<MAXSIZE;i++)
+       printf("%f \t", ImagOut[i]);
+       printf("\n");
  }
  *lock = 0;
 
@@ -192,7 +192,6 @@ int main(int argc, char *argv[]) {
  free(coeff);
  free(amp);
  exit(0);
-
 
 }
 

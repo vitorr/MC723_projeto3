@@ -38,30 +38,30 @@ int sc_main(int ac, char *av[])
 
   //!  ISA simulator
   mips1 mips1_proc1("proc1");
-  mips1 mips1_proc2("proc2");
+  /*mips1 mips1_proc2("proc2");
   mips1 mips1_proc3("proc3");
   mips1 mips1_proc4("proc4");
   mips1 mips1_proc5("proc5");
   mips1 mips1_proc6("proc6");
   mips1 mips1_proc7("proc7");
-  mips1 mips1_proc8("proc8");
+  mips1 mips1_proc8("proc8");*/
   ac_tlm_mem mem("mem");
   router rtr("rtr");
   lock l("l");
-  psin s("s");  
+  psin s("s");
 
 #ifdef AC_DEBUG
   ac_trace("mips1_proc1.trace");
 #endif 
 
   mips1_proc1.DM_port(rtr.target_export);
-  mips1_proc2.DM_port(rtr.target_export);
+/*  mips1_proc2.DM_port(rtr.target_export);
   mips1_proc3.DM_port(rtr.target_export);
   mips1_proc4.DM_port(rtr.target_export);
   mips1_proc5.DM_port(rtr.target_export);
   mips1_proc6.DM_port(rtr.target_export);
   mips1_proc7.DM_port(rtr.target_export);
-  mips1_proc8.DM_port(rtr.target_export);
+  mips1_proc8.DM_port(rtr.target_export);*/
   rtr.DM_port(mem.target_export);
   rtr.LOCK_port(l.target_export);
   rtr.PSIN_port(s.target_export);
@@ -74,7 +74,7 @@ int sc_main(int ac, char *av[])
   ac_tmp = ac;
   mips1_proc1.init(ac_tmp, av_tmp);
 
-  for (i = 0; i < ac; i++) {
+  /*for (i = 0; i < ac; i++) {
     av_tmp[i] = (char *) malloc (strlen (av[i]));
     strcpy (av_tmp[i], av[i]);
   }
@@ -121,7 +121,7 @@ int sc_main(int ac, char *av[])
     strcpy (av_tmp[i], av[i]);
   }
   ac_tmp = ac;
-  mips1_proc8.init(ac_tmp, av_tmp);
+  mips1_proc8.init(ac_tmp, av_tmp);*/
 
 
   cerr << endl;
