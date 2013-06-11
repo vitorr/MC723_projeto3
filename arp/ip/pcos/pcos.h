@@ -3,8 +3,8 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PSIN_H_
-#define PSIN_H_
+#ifndef PCOS_H_
+#define PCOS_H_
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -28,8 +28,8 @@ using tlm::tlm_transport_if;
 namespace user
 {
 
-/// A sine mechanism
-class psin :
+/// A cosine mechanism
+class pcos :
   public sc_module,
   public ac_tlm_transport_if // Using ArchC TLM protocol
 {
@@ -66,8 +66,8 @@ public:
     return response;
   }
 
-  //Stored psin value.
-  float psin_memory;
+  //Stored pcos value.
+  float pcos_memory;
 
   /**
    * Default constructor.
@@ -75,15 +75,15 @@ public:
    * @param k Memory size in kilowords.
    *
    */
-  psin( sc_module_name module_name);
+  pcos( sc_module_name module_name);
 
   /**
    * Default destructor.
    */
-  ~psin();
+  ~pcos();
 
 };
 
 };
 
-#endif //PSIN_H_
+#endif //PCOS_H_

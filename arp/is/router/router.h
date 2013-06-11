@@ -16,6 +16,7 @@
 #include "ac_tlm_port.H"
 #define LOCK_ADDR (8*1024*1024)
 #define PSIN_ADDR (9*1024*1024)
+#define PCOS_ADDR (10*1024*1024)
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -48,6 +49,8 @@ public:
   ac_tlm_port LOCK_port;
   //Communication port to the psin.
   ac_tlm_port PSIN_port;	
+  //Communication port to the pcos.
+  ac_tlm_port PCOS_port;	
 
 
   /**
@@ -59,9 +62,12 @@ public:
     //Access to the lock.
     if (request.addr == LOCK_ADDR) {
         return LOCK_port->transport (request);
-    //Access to the peripheral sin
+    //Access to the peripheral sin (psin)
     } else if (request.addr == PSIN_ADDR) {
         return PSIN_port->transport (request);
+    //Access to the peripheral cos (pcos)
+    } else if (request.addr == PCOS_ADDR) {
+        return PCOS_port->transport (request);
     //Access to other memory positions.
     } else {
         return DM_port->transport (request);

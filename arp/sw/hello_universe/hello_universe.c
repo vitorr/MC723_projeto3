@@ -2,12 +2,14 @@
 #include <math.h>
 #define LOCK_ADDR (8*1024*1024)
 #define PSIN_ADDR (9*1024*1024)
+#define PCOS_ADDR (10*1024*1024)
 
 int main(int argc, char *argv[]){
   int i;
   volatile static int proc_number = 0;
   volatile const int * l = (int *) LOCK_ADDR;
   volatile float * s = (float *) PSIN_ADDR;
+  volatile float * c = (float *) PCOS_ADDR;
   int l_value;
 
   //Gets the lock.
@@ -16,6 +18,8 @@ int main(int argc, char *argv[]){
   printf("Hello universe! From processor %d\n", proc_number);
   *s = 3.14/6;
   printf("Sin: %f\n", *s);
+  *c = 3.14/6;
+  printf("Cos: %f\n", *c);
   *l = 0; 
 
   exit(0); // To avoid cross-compiler exit routine

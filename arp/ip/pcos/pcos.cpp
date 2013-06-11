@@ -6,28 +6,28 @@
 // SystemC includes
 // ArchC includes
 
-#include "psin.h"
+#include "pcos.h"
 #include <math.h>
 
 //////////////////////////////////////////////////////////////////////////////
 
 /// Namespace to isolate memory from ArchC
-using user::psin;
+using user::pcos;
 
 /// Constructor
-psin::psin( sc_module_name module_name) :
+pcos::pcos( sc_module_name module_name) :
   sc_module( module_name ),
   target_export("iport")
 {
-    /// Binds target_export to the sin peripheral (psin).
+    /// Binds target_export to the cos peripheral (pcos).
     target_export( *this );
 
-    /// Initialize psin memory position.
-    psin_memory = 0;
+    /// Initialize pcos memory position.
+    pcos_memory = 0;
 }
 
 /// Destructor
-psin::~psin() {
+pcos::~pcos() {
 
 }
 
@@ -36,16 +36,16 @@ psin::~psin() {
   * @param d is the data being written
   * @returns A TLM response packet with SUCCESS
 */
-ac_tlm_rsp_status psin::writem( const uint32_t &d )
+ac_tlm_rsp_status pcos::writem( const uint32_t &d )
 {
   // Convert big endian to little endian as int.
   uint32_t arg_int = __builtin_bswap32(d);
   float arg_float;
   // Copy int content to float content.
   memcpy(&arg_float, &arg_int, sizeof(uint32_t));
-  // Calculate sine of the correct float representation and write.
-  float res = sinf(arg_float);
-  psin_memory = res;
+  // Calculate cosine of the correct float representation and write.
+  float res = cosf(arg_float);
+  pcos_memory = res;
   return SUCCESS;
 }
 
@@ -54,13 +54,13 @@ ac_tlm_rsp_status psin::writem( const uint32_t &d )
   * @param d is the data that will be read
   * @returns A TLM response packet with SUCCESS and a modified d
 */
-ac_tlm_rsp_status psin::readm( uint32_t &d )
+ac_tlm_rsp_status pcos::readm( uint32_t &d )
 { 
-  uint32_t psin_int;
+  uint32_t pcos_int;
   // Copy float content to int content.
-  memcpy(&psin_int, &psin_memory, sizeof(uint32_t));
+  memcpy(&pcos_int, &pcos_memory, sizeof(uint32_t));
   // Convert little endian to big endian as int.
-  d = __builtin_bswap32(psin_int);
+  d = __builtin_bswap32(pcos_int);
   return SUCCESS;
 }
 
