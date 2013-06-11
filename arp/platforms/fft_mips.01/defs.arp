@@ -1,4 +1,4 @@
-IP := ac_tlm_mem lock psin
+IP := ac_tlm_mem lock psin pcos
 IS := router 
 PROCESSOR := mips1
 SW := fft
