@@ -133,6 +133,13 @@ int sc_main(int ac, char *av[])
   sc_start();
 
   mips1_proc1.PrintStat();
+  mips1_proc2.PrintStat();
+  mips1_proc3.PrintStat();
+  mips1_proc4.PrintStat();
+  mips1_proc5.PrintStat();
+  mips1_proc6.PrintStat();
+  mips1_proc7.PrintStat();
+  mips1_proc8.PrintStat();
   cerr << endl;
 
 #ifdef AC_STATS

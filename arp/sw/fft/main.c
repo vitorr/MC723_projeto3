@@ -18,6 +18,7 @@ int _main() {
     float *amp;
     int invfft=0;
 
+
     volatile const int * lock = (int *) LOCK_ADDR;
     int waves, length;
     char mode[10];
@@ -80,8 +81,8 @@ printf("ImagOut:\n");
 }
 
 int main(int argc, char *argv[]) {
-	unsigned MAXSIZE = 8;
-	unsigned MAXWAVES = 100;
+	unsigned MAXSIZE = 16;
+	unsigned MAXWAVES = 1000;
 	int i,j;
 	static float *RealIn;
 	static float *ImagIn;
@@ -91,6 +92,8 @@ int main(int argc, char *argv[]) {
 	static float *amp;
 	int invfft=0;
 
+        volatile float * s = (float *) PSIN_ADDR;
+	volatile float * c = (float *) PCOS_ADDR;
 	volatile const int * lock = (int *) LOCK_ADDR;
     volatile static int proc_index = 0, finished_procs = 0; 
     volatile int current_proc_index = 0;
@@ -148,19 +151,22 @@ int main(int argc, char *argv[]) {
 		 // Randomly select sine or cossine.
 		 if (rand()%2)
 		 {
-		 		RealIn[i]+=coeff[j]*cos(amp[j]*i);
+			while(*lock != 0); //waits until it can uses the peripheral
+			*c = amp[j]*i; //writes to the cos peripheral
+			RealIn[i]+=coeff[j]*(*c); //reads from the peripheral
+			*lock = 0;
+//		 		RealIn[i]+=coeff[j]*cos(amp[j]*i);
 			}
 		 else
 		 {
-		 	RealIn[i]+=coeff[j]*sin(amp[j]*i);
+			while(*lock != 0); //waits until it can uses the peripheral
+			*s = amp[j]*i; //writes to the sen peripheral
+			RealIn[i]+=coeff[j]*(*s); //reads from the peripheral
+			*lock = 0;
+//		 	RealIn[i]+=coeff[j]*sin(amp[j]*i);
 		 }
   	 ImagIn[i]=0;
 	 }
- }
-
- /* regular*/
- if (current_proc_index == 0) {
-  fft_float (MAXSIZE,invfft,RealIn,ImagIn,RealOut,ImagOut);
  }
 
  //Another processor finished.
@@ -169,8 +175,10 @@ int main(int argc, char *argv[]) {
  //Wait for all processors to finish their part of the data.
  while (finished_procs < NUM_PROCS); 
 
- //Gets one processor to print the result and free memory.
+ //Gets one processor to get final result, print it and free memory.
  if (current_proc_index == 0) {
+  /* regular processing by one processor*/
+  fft_float (MAXSIZE,invfft,RealIn,ImagIn,RealOut,ImagOut);
   printf("RealOut:\n");
   for (i=0;i<MAXSIZE;i++)
     printf("%f \t", RealOut[i]);
@@ -188,8 +196,7 @@ int main(int argc, char *argv[]) {
   free(coeff);
   free(amp);
  }
- 
+
  exit(0);
 }
-
 
